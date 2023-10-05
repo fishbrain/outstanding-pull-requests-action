@@ -1,0 +1,30 @@
+name: 'Outstanding Pull Requests'
+description: 'Send a Slack message when two branches of a repository diverge by a certain number of commits.'
+author: 'Luke Hansford <@lhansford>'
+inputs:
+  owner:
+    description: 'The owner of the repository'
+    required: true
+  repository:
+    description: 'The name of the repository'
+    required: true
+  slackToken:
+    description: 'A token for a Slack web client'
+    required: true
+  slackChannel:
+    description: 'The name of the slack channel (starting with #) to post to'
+    required: true
+  basehead:
+    description: 'The base and head branches to measure against, in the format "BASE...HEAD". Defaults to "main...develop".'
+    required: false
+    default: 'main...develop'
+  commitThreshold:
+    description: 'The difference in commits needed before sending a message in Slack. Defaults to 5.'
+    required: false
+    default: "5"
+branding:
+  color: 'blue'
+  icon: 'git-pull-request'
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

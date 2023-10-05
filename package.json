@@ -1,0 +1,36 @@
+{
+  "name": "outstanding-pull-requests-action",
+  "version": "1.0.0",
+  "description": "Send a Slack message when two branches of a repository diverge by a certain number of commits.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src --ext .ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fishbrain/outstanding-pull-requests-action"
+  },
+  "keywords": [
+    "pull requests",
+    "github",
+    "action",
+    "actions"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fishbrain/outstanding-pull-requests-action/issues"
+  },
+  "homepage": "https://github.com/fishbrain/outstanding-pull-requests-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.10.1",
+    "@octokit/rest": "^20.0.2",
+    "@slack/web-api": "^6.9.0"
+  },
+  "devDependencies": {
+    "eslint-config-fishbrain-base": "^5.0.2"
+  }
+}
