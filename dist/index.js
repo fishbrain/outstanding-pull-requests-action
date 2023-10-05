@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const rest_1 = require("@octokit/rest");
 const web_api_1 = require("@slack/web-api");
 const core_1 = require("@actions/core");
-const COMMIT_THRESHOLD = 5;
 const repo = (0, core_1.getInput)('repository', { required: true });
 const owner = (0, core_1.getInput)('owner', { required: true });
 const basehead = (0, core_1.getInput)('basehead');
@@ -43,7 +42,9 @@ async function checkOutstandingPrs() {
                 },
             ],
         };
-        sendSlackMessage(messageWithAttachments);
+        await sendSlackMessage(messageWithAttachments);
     }
 }
-checkOutstandingPrs().then(() => (0, core_1.info)('Finished check.'));
+checkOutstandingPrs()
+    .then(() => (0, core_1.info)('Finished check.'))
+    .catch(e => (0, core_1.error)(e));

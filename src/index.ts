@@ -1,8 +1,6 @@
 import { Octokit } from '@octokit/rest';
 import { WebClient } from '@slack/web-api';
-import { getInput, info } from '@actions/core';
-
-const COMMIT_THRESHOLD = 5;
+import { error, getInput, info } from '@actions/core';
 
 const repo = getInput('repository', { required: true });
 const owner = getInput('owner', { required: true });
@@ -60,8 +58,10 @@ async function checkOutstandingPrs() {
       ],
     };
 
-    sendSlackMessage(messageWithAttachments);
+    await sendSlackMessage(messageWithAttachments);
   }
 }
 
-checkOutstandingPrs().then(() => info('Finished check.'));
+checkOutstandingPrs()
+  .then(() => info('Finished check.'))
+  .catch(e => error(e));

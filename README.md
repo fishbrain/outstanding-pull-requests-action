@@ -31,7 +31,7 @@ The difference in commits needed before sending a message in Slack. Default: `5`
 ## Example usage
 
 ```yml
-uses: fishbrain/outstanding-pull-requests-action@v1.0.0
+uses: fishbrain/outstanding-pull-requests-action@v1.0.1
 with:
   owner: fishbrain
   repository: outstanding-pull-requests-action
