@@ -32,6 +32,8 @@ The difference in commits needed before sending a message in Slack. Default: `5`
 
 ```yml
 uses: fishbrain/outstanding-pull-requests-action@v1.0.1
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Only needs read permissions for the repo
 with:
   owner: fishbrain
   repository: outstanding-pull-requests-action

@@ -1,6 +1,6 @@
 import { Octokit } from '@octokit/rest';
 import { WebClient } from '@slack/web-api';
-import { error, getInput, info } from '@actions/core';
+import { error, getInput, info, setFailed } from '@actions/core';
 
 const repo = getInput('repository', { required: true });
 const owner = getInput('owner', { required: true });
@@ -64,4 +64,8 @@ async function checkOutstandingPrs() {
 
 checkOutstandingPrs()
   .then(() => info('Finished check.'))
-  .catch(e => error(e));
+  .catch(e => {
+    error(e);
+    error(e.message);
+    setFailed(e);
+  });
