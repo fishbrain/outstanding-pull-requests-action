@@ -63,5 +63,9 @@ async function checkOutstandingPrs() {
 }
 
 checkOutstandingPrs()
-  .then(() => info('Finished check.'))
-  .catch(e => error(e));
+  .then(() => {
+    info('Finished check.');
+  })
+  .catch((e: unknown) => {
+    error(e as Error);
+  });
