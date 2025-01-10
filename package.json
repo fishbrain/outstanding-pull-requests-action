@@ -27,7 +27,7 @@
   "homepage": "https://github.com/fishbrain/outstanding-pull-requests-action#readme",
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "@octokit/rest": "^21.0.1",
+    "@octokit/rest": "^21.1.0",
     "@slack/web-api": "^7.8.0"
   },
   "devDependencies": {
