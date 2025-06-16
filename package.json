@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "description": "Send a Slack message when two branches of a repository diverge by a certain number of commits.",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "build": "ncc build src/index.ts -o dist",
     "lint": "node_modules/.bin/eslint src"
@@ -31,7 +32,7 @@
     "@slack/web-api": "^7.9.2"
   },
   "devDependencies": {
-    "@fishbrain/eslint-config-base": "6.2.1",
+    "@fishbrain/eslint-config-base": "6.3.2",
     "@vercel/ncc": "^0.38.3"
   }
 }
