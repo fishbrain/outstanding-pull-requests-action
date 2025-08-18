@@ -32,7 +32,7 @@
     "@slack/web-api": "^7.9.3"
   },
   "devDependencies": {
-    "@fishbrain/eslint-config-base": "6.3.3",
+    "@fishbrain/eslint-config-base": "6.3.4",
     "@vercel/ncc": "^0.38.3"
   }
 }
