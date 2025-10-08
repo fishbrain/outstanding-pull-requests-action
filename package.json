@@ -29,7 +29,7 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@octokit/rest": "^22.0.0",
-    "@slack/web-api": "^7.10.0"
+    "@slack/web-api": "^7.11.0"
   },
   "devDependencies": {
     "@fishbrain/eslint-config-base": "6.3.4",
