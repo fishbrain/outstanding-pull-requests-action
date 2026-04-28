@@ -78,6 +78,34 @@
                 "pin",
                 "digest"
             ]
+        },
+        {
+            "automerge": true,
+            "labels": [],
+            "matchPackageNames": [
+                "actions/checkout",
+                "actions/setup-node"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "patch",
+                "pin",
+                "digest"
+            ]
+        },
+        {
+            "automerge": true,
+            "labels": [],
+            "matchPackageNames": [
+                "@actions/core",
+                "@octokit/rest"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "patch",
+                "pin",
+                "digest"
+            ]
         }
     ],
     "prConcurrentLimit": 10,
