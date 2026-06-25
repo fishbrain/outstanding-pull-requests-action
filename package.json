@@ -33,6 +33,6 @@
   },
   "devDependencies": {
     "@fishbrain/eslint-config-base": "6.3.7",
-    "@vercel/ncc": "0.38.4"
+    "@vercel/ncc": "0.44.0"
   }
 }
