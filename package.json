@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@fishbrain/eslint-config-base": "6.3.7",
-    "@types/node": "24.19.3",
+    "@types/node": "26.6.6",
     "@vercel/ncc": "0.45.0",
     "typescript": "5.9.3"
   }
