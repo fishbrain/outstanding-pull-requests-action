@@ -31,7 +31,7 @@
   "dependencies": {
     "@actions/core": "3.0.1",
     "@actions/github": "9.1.1",
-    "@slack/web-api": "8.4.0"
+    "@slack/web-api": "8.5.0"
   },
   "devDependencies": {
     "@fishbrain/eslint-config-base": "6.3.7",
