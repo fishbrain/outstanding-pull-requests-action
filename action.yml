@@ -1,30 +1,37 @@
 name: 'Outstanding Pull Requests'
-description: 'Send a Slack message when two branches of a repository diverge by a certain number of commits.'
+description: 'Send a Slack message when too many pull requests are merged into one branch but not yet into another.'
 author: 'Luke Hansford <@lhansford>'
 inputs:
-  owner:
-    description: 'The owner of the repository'
-    required: true
-  repository:
-    description: 'The name of the repository'
-    required: true
   slackToken:
-    description: 'A token for a Slack web client'
+    description: 'A Slack bot token that can post to slackChannel.'
     required: true
   slackChannel:
-    description: 'The name of the slack channel (starting with #) to post to'
+    description: 'The Slack channel to post to, for example "#releases" or a channel ID.'
     required: true
   basehead:
-    description: 'The base and head branches to measure against, in the format "BASE...HEAD". Defaults to "main...develop".'
+    description: 'The branches to compare, as "BASE...HEAD". Pull requests in HEAD but not in BASE count as outstanding.'
     required: false
     default: 'main...develop'
-  commitThreshold:
-    description: 'The difference in commits needed before sending a message in Slack. Defaults to 5.'
+  pullRequestThreshold:
+    description: 'Post to Slack when at least this many pull requests are outstanding. A positive integer; defaults to 5.'
     required: false
-    default: "5"
+  commitThreshold:
+    description: 'Deprecated alias for pullRequestThreshold. Despite the name, it counts pull requests, not commits.'
+    required: false
+    deprecationMessage: 'commitThreshold is deprecated and counts pull requests, not commits. Use pullRequestThreshold instead.'
+  token:
+    description: 'A GitHub token with read access to the repository.'
+    required: false
+    default: ${{ github.token }}
+  owner:
+    description: 'The repository owner. Defaults to the owner of the repository running the workflow.'
+    required: false
+  repository:
+    description: 'The repository name. Defaults to the repository running the workflow.'
+    required: false
 branding:
   color: 'blue'
   icon: 'git-pull-request'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'

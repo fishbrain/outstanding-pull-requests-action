@@ -1,71 +1,79 @@
-import { Octokit } from '@octokit/rest';
+import * as core from '@actions/core';
+import { context, getOctokit } from '@actions/github';
 import { WebClient } from '@slack/web-api';
-import { error, getInput, info } from '@actions/core';
 
-const repo = getInput('repository', { required: true });
-const owner = getInput('owner', { required: true });
-const basehead = getInput('basehead');
-const slackToken = getInput('slackToken', { required: true });
-const slackChannel = getInput('slackChannel', { required: true });
-const commitThreshold = parseInt(getInput('commitThreshold'));
+import { tally, type CompareCommit } from './tally.ts';
 
-const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-const slackWebClient = new WebClient(slackToken);
+const PER_PAGE = 100;
+const DEFAULT_THRESHOLD = 5;
 
-function tallyCommitTypes(commits: { commit: { message: string } }[]): [number, number] {
-  return commits.reduce(
-    ([prs, cs], { commit: { message } }) => {
-      const isMerge = message.startsWith('Merge pull request');
-      const isSquash = /^.+\(#\d+\)(?:\n\n)?/.test(message);
-      return [prs + (isMerge || isSquash ? 1 : 0), cs + (isMerge ? 0 : 1)];
-    },
-    [0, 0],
-  );
+function readThreshold(): number {
+  // commitThreshold is the deprecated name for pullRequestThreshold; the new name wins if both are set.
+  for (const name of ['pullRequestThreshold', 'commitThreshold']) {
+    const raw = core.getInput(name);
+    if (raw === '') {
+      continue;
+    }
+    const threshold = /^\d+$/.test(raw) ? Number(raw) : 0;
+    if (threshold < 1) {
+      throw new Error(`${name} must be a positive integer, got "${raw}".`);
+    }
+    return threshold;
+  }
+  return DEFAULT_THRESHOLD;
 }
 
-async function sendSlackMessage(messageWithAttachments: {
-  text: string;
-  attachments: {
-    text: string;
-  }[];
-}) {
-  await slackWebClient.chat.postMessage({
-    channel: slackChannel,
-    ...messageWithAttachments,
-  });
-}
+async function compare(
+  octokit: ReturnType<typeof getOctokit>,
+  params: { owner: string; repo: string; basehead: string },
+): Promise<{ url: string; commits: CompareCommit[] }> {
+  const commits: CompareCommit[] = [];
 
-async function checkOutstandingPrs() {
-  const {
-    data: { html_url: htmlUrl, commits },
-  } = await octokit.repos.compareCommitsWithBasehead({
-    owner,
-    repo,
-    basehead,
-    per_page: 100,
-  });
+  for (let page = 1; ; page++) {
+    const { data } = await octokit.rest.repos.compareCommitsWithBasehead({
+      ...params,
+      per_page: PER_PAGE,
+      page,
+    });
+    commits.push(...data.commits);
 
-  const [pullRequestsCount, commitsCount] = tallyCommitTypes(commits);
-
-  if (pullRequestsCount > commitThreshold) {
-    const message = `${repo}: There are *${pullRequestsCount} outstanding pull requests* _(${commitsCount} commits)_ in \`${basehead}\`.`;
-    const messageWithAttachments = {
-      text: message,
-      attachments: [
-        {
-          text: htmlUrl,
-        },
-      ],
-    };
-
-    await sendSlackMessage(messageWithAttachments);
+    if (data.commits.length < PER_PAGE || commits.length >= data.total_commits) {
+      return { url: data.html_url, commits };
+    }
   }
 }
 
-checkOutstandingPrs()
-  .then(() => {
-    info('Finished check.');
-  })
-  .catch((e: unknown) => {
-    error(e as Error);
+async function run(): Promise<void> {
+  const threshold = readThreshold();
+  const owner = core.getInput('owner') || context.repo.owner;
+  const repo = core.getInput('repository') || context.repo.repo;
+  const basehead = core.getInput('basehead', { required: true });
+  const octokit = getOctokit(core.getInput('token', { required: true }));
+
+  const { url, commits } = await compare(octokit, { owner, repo, basehead });
+  const { pullRequests, commits: commitCount } = tally(commits);
+
+  core.info(
+    `${owner}/${repo} ${basehead}: ${pullRequests} pull requests, ${commitCount} commits (threshold: ${threshold}).`,
+  );
+  if (pullRequests < threshold) {
+    return;
+  }
+
+  // The default retry policy can keep the step running for about 30 minutes during a Slack outage.
+  const slack = new WebClient(core.getInput('slackToken', { required: true }), {
+    retryConfig: { retries: 2 },
   });
+  await slack.chat.postMessage({
+    channel: core.getInput('slackChannel', { required: true }),
+    text: `${repo}: There are *${pullRequests} outstanding pull requests* _(${commitCount} commits)_ in \`${basehead}\`. <${url}|View the diff>`,
+    unfurl_links: false,
+  });
+  core.info('Posted to Slack.');
+}
+
+try {
+  await run();
+} catch (e) {
+  core.setFailed(e instanceof Error ? e.message : String(e));
+}

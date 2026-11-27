@@ -1,15 +1,17 @@
 {
   "name": "outstanding-pull-requests-action",
-  "version": "1.0.1",
-  "description": "Send a Slack message when two branches of a repository diverge by a certain number of commits.",
-  "main": "dist/index.js",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Send a Slack message when too many pull requests are merged into one branch but not yet into another.",
   "type": "module",
   "scripts": {
     "build": "ncc build src/index.ts -o dist",
-    "lint": "node_modules/.bin/eslint src"
+    "lint": "eslint src",
+    "typecheck": "tsc",
+    "test": "node --test 'src/**/*.test.ts'"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "repository": {
     "type": "git",
@@ -28,11 +30,13 @@
   "homepage": "https://github.com/fishbrain/outstanding-pull-requests-action#readme",
   "dependencies": {
     "@actions/core": "3.0.1",
-    "@octokit/rest": "22.0.1",
+    "@actions/github": "9.1.1",
     "@slack/web-api": "8.4.0"
   },
   "devDependencies": {
     "@fishbrain/eslint-config-base": "6.3.7",
-    "@vercel/ncc": "0.45.0"
+    "@types/node": "24.19.3",
+    "@vercel/ncc": "0.45.0",
+    "typescript": "5.9.3"
   }
 }

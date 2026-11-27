@@ -6,8 +6,10 @@ export default [
     ignores: ['eslint.config.js', 'prettier.config.js'],
   },
   {
+    // node:test's test() returns a promise that the runner tracks itself.
+    files: ['**/*.test.ts'],
     rules: {
-      'import/no-unresolved': ['error', { ignore: ['@octokit/rest'] }],
+      '@typescript-eslint/no-floating-promises': 'off',
     },
   },
 ];
