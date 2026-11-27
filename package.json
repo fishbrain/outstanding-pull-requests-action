@@ -37,6 +37,6 @@
     "@fishbrain/eslint-config-base": "6.3.7",
     "@types/node": "24.19.3",
     "@vercel/ncc": "0.45.0",
-    "typescript": "5.9.3"
+    "typescript": "7.0.2"
   }
 }
